@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <!--
+
+        EVERYTHING IS PHYSICAL
+        EVERYTHING IS FRACTAL
+        EVERYTHING IS RECURSIVE
+        NO MONEY
+        MO MINING
+        NO PROPERTY
+        LOOK AT THE INSECTS
+        LOOK AT THE FUNGI
+        LANGUAGE IS HOW THE MIND PARSES REALITY
+
+    -->
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAP//AP///wANAP8A5Dz6ABueRwAAt/8A6BonABo86AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAREREREREREREREAAAEREREREQCIgREREd3dwAAB3d3d3d3d3d3d3d3d3d3d3d3d3VVVVVVVQAFVVAAVVVQIiBRAiIBEQIAIBECAAERAgAgFgIABmYCIiBmAiIGZgIiIGYCIgZmYCIAaIAAMzMzAAiIiIiIiIiIiIiIiIiIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" rel="icon" type="image/x-icon" />
+
+    <!--Stop Google:-->
+    <META NAME="robots" CONTENT="noindex,nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.js"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>    
+    
+</head>
+<body>    
+<a href = "index.html" id = "homelink">home</a>
+
+    <div id = "qrcode"></div>
+
+
+<div id = "readme">
+    click to turn the sound on/off.  
+</div>
+<script>
+    /*
+
+data should have:
+when (date and time of start and end)
+who (url to operator)
+where (city, watershed, street, lat/lon, altitude)
+water(where it comes from, where it goes)
+code repository
+array of powers for fundamental and 3 harmonics up from that
+array of times in seconds from start
+stimulus
+organisms
+distance between electrodes
+type of electrode
+depth of electrode
+temperature
+
+*/
+
+
+let osc, fft,osc2,osc3;
+
+frameIndex = 0;
+xgain = 6;
+oscon = false;
+
+sine_frequency = 1000; //Hz
+sine_amplitude = 0.1;//relative units in browser
+f1 = 1000;
+f2 = 2000;
+f3 = 3000;
+f4 = 4000;
+power1array = [];
+power2array = [];
+power3array = [];
+power4array = [];
+power1 = 0;
+power2 = 0;
+power3 = 0;
+power4 = 0;
+time = 0;
+timearray = [];
+
+data = {};
+data.starttime = Math.floor(Date.now() / 100)/10;
+data.startdate = Date();
+
+function setup() {
+
+  t0 = millis();
+  frameRate(32);
+  createCanvas(innerWidth, innerHeight);
+
+   //  background(159,135,103);
+
+  osc = new p5.SinOsc(); // set frequency and type
+  osc.amp(0.1);
+  fft = new p5.FFT();
+//  osc.start();
+  freq = 1000;
+  osc.freq(freq);  
+
+
+  mic = new p5.AudioIn();
+  mic.start();
+  fft = new p5.FFT();
+  fft.setInput(mic);
+
+  
+}
+
+numberofaverages = 10;
+timeindex = 0;
+function draw() {
+
+  spectrum = fft.analyze();
+  nyquistFreq = sampleRate() / 2;
+  binFreq = nyquistFreq / (spectrum.length);
+  i1000 = Math.round(1000/binFreq); 
+
+  background(159,135,103);
+  strokeWeight(1);
+  stroke(0);
+//  text("Number of Points = " + spectrum.length.toString(),10,120);
+
+  strokeWeight(4);
+  noFill();
+  beginShape();
+  vertex(0,0.5*height);
+  for(var i = 0; i < spectrum.length; i++) {
+     vertex(i*xgain, map(spectrum[i], 0, 255, 0.5*height, 0));
+  }
+  vertex(width,height);
+  endShape();
+
+  power1 += spectrum[i1000];
+  power2 += spectrum[2*i1000];
+  power3 += spectrum[3*i1000];
+  power4 += spectrum[4*i1000];
+
+  if(timeindex%numberofaverages == 0){
+      power1array.push(power1/numberofaverages);
+      power2array.push(power2/numberofaverages);
+      power3array.push(power3/numberofaverages);
+      power4array.push(power4/numberofaverages);
+      power1 = 0;
+      power2 = 0;
+      power3 = 0;
+      power4 = 0;
+      
+      time = Math.floor(Date.now() / 100)/10 - data.starttime;
+      timearray.push(time);
+  }
+  
+
+  
+  noFill();
+  strokeWeight(4);
+  stroke("red");
+  fill("red");
+  line(xgain*i1000,0,xgain*i1000, 0.5*height);
+  circle(xgain*i1000,map(spectrum[i1000], 0, 255,  0.5*height, 0),20)
+
+  noFill();
+  beginShape();
+  vertex(0,height);
+  for(var i = 0; i < power1array.length; i++) {
+     vertex(i, map(power1array[i], 0, 255, height, 0.5*height));
+  }
+  endShape();
+
+  stroke("green");
+  fill("green");
+  line(xgain*2*i1000,0,xgain*2*i1000, 0.5*height);
+  circle(xgain*2*i1000,map(spectrum[2*i1000], 0, 255,  0.5*height, 0),20)
+  noFill();
+  beginShape();
+  vertex(0,height);
+  for(var i = 0; i < power2array.length; i++) {
+     vertex(i, map(power2array[i], 0, 255, height, 0.5*height));
+  }
+  endShape();
+
+
+  stroke("blue");
+  fill("blue");
+  line(xgain*3*i1000,0,xgain*3*i1000, 0.5*height);
+  circle(xgain*3*i1000,map(spectrum[3*i1000], 0, 255,  0.5*height, 0),20)
+  noFill();
+  beginShape();
+  vertex(0,height);
+  for(var i = 0; i < power3array.length; i++) {
+     vertex(i, map(power3array[i], 0, 255, height, 0.5*height));
+  }
+  endShape();
+  
+  stroke("purple");
+  fill("purple");
+  line(xgain*4*i1000,0,xgain*4*i1000, 0.5*height);
+  circle(xgain*4*i1000,map(spectrum[4*i1000], 0, 255,  0.5*height, 0),20)
+  noFill();
+  beginShape();
+  vertex(0,height);
+  for(var i = 0; i < power4array.length; i++) {
+     vertex(i, map(power4array[i], 0, 255, height, 0.5*height));
+  }
+  endShape();
+
+  timeindex++;
+  if(power1array.length > innerWidth){
+    power1array = [];
+    power2array = [];
+    power3array = [];
+    power4array = [];
+    timearray = [];
+  }
+  if(timeindex > 100000){
+     timeindex = 0;
+          
+  }
+ 
+  
+}
+
+function mouseClicked() {
+  
+  if(!oscon){
+      osc.start();
+
+  }
+  else{
+      osc.stop();
+  }
+  oscon = !oscon;
+    
+}
+
+
+codesquaresize = 100;
+marginsize = 10;
+fontsize = 12;
+//globalurl = "http://www.trashrobot.org/qrcode.html";
+globalurl = window.location.href;
+qrcode = new QRCode(document.getElementById("qrcode"), {
+	text: globalurl,
+	width: codesquaresize,
+	height: codesquaresize,
+	colorDark : "#000000",
+	colorLight : "#ffffff",
+	correctLevel : QRCode.CorrectLevel.H
+});
+
+
+</script>
+<style>
+    body{
+        overflow:hidden;
+    }
+    #homelink{
+        position:absolute;
+        color:blue;
+        top:10px;
+        left:25%;
+        width:5em;
+        font-family:Comic Sans MS;
+    }
+    #readme{
+        position:absolute;
+        right:10px;
+        top:10px;
+        border:solid;
+        overflow:scroll;
+        height:200px;
+        width:200px;
+        border-radius:10px;
+        border-width:5px;
+        font-family:courier;
+        color:white;
+        background-color:#0000ff;
+        font-size:16px;
+        padding:1em 1em 1em 1em;
+    }
+    #dtmfimage{
+        position:absolute;
+        right:10px;
+        width:200px;
+        top:50%;
+    }
+    #qrcode{
+        position:absolute;
+        right:300px;
+        top:10px;
+        z-index:200;
+        background-color:white;
+        border:solid;
+        border-width:10px;
+        border-color:white;
+    }
+</style>
+</body>
+</html>
