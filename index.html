@@ -77,10 +77,19 @@ power3 = 0;
 power4 = 0;
 time = 0;
 timearray = [];
+numberofaverages = 10;
+//numberofaverages = 1;
+windowsize = innerWidth/2;
+//windowsize = 200;
 
 data = {};
-data.starttime = Math.floor(Date.now() / 100)/10;
+data.starttime = Math.floor(Date.now() / 1000);
 data.startdate = Date();
+data.f1 = f1;
+data.f2 = f2;
+data.f3 = f3;
+data.f4 = f4;
+data.notes = "experiment notes";
 
 function setup() {
 
@@ -106,7 +115,6 @@ function setup() {
   
 }
 
-numberofaverages = 10;
 timeindex = 0;
 function draw() {
 
@@ -204,12 +212,59 @@ function draw() {
   endShape();
 
   timeindex++;
-  if(power1array.length > innerWidth){
+  if(power1array.length > windowsize){
+    
+    data.p1 = power1array;
+    data.p2 = power2array;
+    data.p3 = power3array;
+    data.p4 = power4array;
+    data.timeseconds= timearray;
+    
+    svgtext = "<svg width=\"" + innerWidth.toString() + "\" height=\"" + (Math.round(0.5*innerHeight)).toString() + "\" viewbox = \"0 0 " + innerWidth.toString() + " " + (Math.round(0.5*innerHeight)).toString() + "\"  xmlns=\"http://www.w3.org/2000/svg\">\n";
+    svgtext += "<!--<json>";
+    svgtext += JSON.stringify(data);
+    svgtext += "</json>-->";
+
+    svgtext += "\n<path d = \"M0 " + map(power1array[0], 0, 255, 0.5*height, 0).toString();
+    for(var i = 1; i < power1array.length; i++) {
+     svgtext += " L" + i.toString() + " " + map(power1array[i], 0, 255, 0.5*height, 0).toString();
+    }
+    svgtext += "\" stroke = \"red\"  stroke-width = \"4\" fill = \"none\" />";
+
+    svgtext += "\n<path d = \"M0 " + map(power2array[0], 0, 255, 0.5*height, 0).toString();
+    for(var i = 1; i < power2array.length; i++) {
+     svgtext += " L" + i.toString() + " " + map(power2array[i], 0, 255, 0.5*height, 0).toString();
+    }
+    svgtext += "\" stroke = \"green\"  stroke-width = \"4\" fill = \"none\" />";
+    
+    svgtext += "\n<path d = \"M0 " + map(power3array[0], 0, 255, 0.5*height, 0).toString();
+    for(var i = 1; i < power3array.length; i++) {
+     svgtext += " L" + i.toString() + " " + map(power3array[i], 0, 255, 0.5*height, 0).toString();
+    }
+    svgtext += "\" stroke = \"blue\"  stroke-width = \"4\" fill = \"none\" />";
+    
+    svgtext += "\n<path d = \"M0 " + map(power4array[0], 0, 255, 0.5*height, 0).toString();
+    for(var i = 1; i < power4array.length; i++) {
+     svgtext += " L" + i.toString() + " " + map(power4array[i], 0, 255, 0.5*height, 0).toString();
+    }
+    svgtext += "\" stroke = \"purple\"  stroke-width = \"4\" fill = \"none\" />";    
+    
+    svgtext += "\n</svg>";          
+    
+    var httpc2 = new XMLHttpRequest();
+    httpc2.open("POST","filesaver.php", true);
+    httpc2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc2.send("data="+encodeURIComponent(svgtext) +"&filename=plots/plot" + data.starttime.toString() +  ".svg");//send text to filesaver.php
+    
     power1array = [];
     power2array = [];
     power3array = [];
     power4array = [];
     timearray = [];
+    
+    data.starttime = Math.floor(Date.now() / 1000);
+    data.startdate = Date();
+
   }
   if(timeindex > 100000){
      timeindex = 0;

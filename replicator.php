@@ -1,6 +1,6 @@
 <?php
 
-$dnaurl = "https://trashrobot.net/HYPERSPACE/data/dna.txt";
+$dnaurl = "https://raw.githubusercontent.com/LafeLabs/NEUROTRON/refs/heads/main/data/dna.txt";
 
 if(isset($_GET["dna"])){
     $dnaurl = $_GET["dna"];
@@ -12,8 +12,9 @@ $dna = json_decode($dnaraw);
 
 mkdir("data");
 mkdir("php");
+mkdir("plots");
 
-copy("https://trashrobot.net/HYPERSPACE/php/replicator.txt","replicator.php");
+copy("https://raw.githubusercontent.com/LafeLabs/NEUROTRON/refs/heads/main/php/replicator.txt","replicator.php");
 
 
 foreach($dna->html as $value){
