@@ -2,6 +2,8 @@
 # [TRASH MAGIC NEUROTRON](https://github.com/LafeLabs/NEUROTRON)
 
  - [datafeed.html](datafeed.html)
+ - [gihtub repository](https://github.com/LafeLabs/NEUROTRON)
+ - [hyperspace.html](hyperspace.html)
  - [index.html](index.html)
  - [editor.php](editor.php)
  - [webeditor.html](webeditor.html)

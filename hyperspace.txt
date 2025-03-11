@@ -1,5 +1,9 @@
 [
     {
+        "text": "github repository",
+        "url": "https://github.com/LafeLabs/NEUROTRON"
+    },
+    {
         "text": "hyperspace-page.html",
         "url": "hyperspace-page.html"
     },
@@ -28,31 +32,7 @@
         "url": "index.html"
     },
     {
-        "text": "HYPERLAND",
-        "url": "https://archive.org/details/DouglasAdams-Hyperland"
-    },
-    {
-        "text": "HYPERTEXT",
-        "url": "https://en.wikipedia.org/wiki/Hypertext"
-    },
-    {
-        "text": "HTML",
-        "url": "https://en.wikipedia.org/wiki/HTML"
-    },
-    {
         "text": "FORK",
         "url": "fork.html"
-    },
-    {
-        "text": "TRASH ROBOT DOT NET",
-        "url": "https://trashrobot.net/"
-    },
-    {
-        "text": "DIRT WIZARD ON MASTODON",
-        "url": "https://cyberpunk.lol/@dirtwizard666"
-    },
-    {
-        "text": "DIRT WIZARD ON TIKTOK",
-        "url": "https://www.tiktok.com/@dirt_wizard666"
     }
 ]
