@@ -1,6 +1,16 @@
 
 # [TRASH MAGIC NEUROTRON](https://github.com/LafeLabs/NEUROTRON)
 
+ - [datafeed.html](datafeed.html)
+ - [index.html](index.html)
+ - [editor.php](editor.php)
+ - [webeditor.html](webeditor.html)
+ - [edit.html](edit.html)
+ - [fork.html](fork.html)
+ - [http://localhost](http://localhost)
+
+
+
 [![](images/qrcode.png)](images/qrcode.png)
 [![](images/qrcode-page.png)](images/qrcode-page.png)
 
@@ -23,8 +33,3 @@ data.p3 = [];//power at third harmonic
 data.p4 = [];//power at fourth harmonic 
 ```
 
- - [editor.php](editor.php)
- - [webeditor.html](webeditor.html)
- - [edit.html](edit.html)
- - [fork.html](fork.html)
- - [http://localhost](http://localhost)

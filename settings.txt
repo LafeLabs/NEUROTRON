@@ -1,0 +1,4 @@
+{
+    "numberofpoints": 500,
+    "averagesperpoint": 5
+}

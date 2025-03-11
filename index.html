@@ -26,36 +26,99 @@
     
 </head>
 <body>    
-<a href = "index.html" id = "homelink">home</a>
 
-    <div id = "qrcode"></div>
+<style>
+    body{
+        overflow:hidden;
+        font-family:Comic Sans MS;
+        background-color:#9f8767;
+    }
+    #notes{
+        position:absolute;
+        width:200px;
+        height:200px;
+        font-family:Comic Sans MS;
+        background-color:#9f876700;
+        overflow:scroll;
+        top:3em;
+        right:10px;
+        border:solid;
+        padding:1em 1em 1em 1em;
+        border-radius:0.5em;
+    }
+    a{
+        color:blue;
+        font-size:2em;
+    }
+    input{
+        background-color:#9f876700;
+        font-family:Comic Sans MS;
 
+    }
+    #hometable{
+        z-index:1;
+        position:absolute;
+        background-color:#9f876700;
+        top:1px;
+        left:1PX;
+        font-family:Comic Sans MS;
+    }
+    #click{
+        position:absolute;
+        right:10px;
+        top:10px;
+        font-size:1em;
+    }
 
-<div id = "readme">
-    click to turn the sound on/off.  
-</div>
+</style>
+<table id = "hometable">
+    <tr>
+        <td>
+    <a href = "readme.html">README!</a>        
+        </td>
+    </tr>
+    <tr>
+        <td>
+    <a href = "datafeed.html">DATA FEED!</a>        
+        </td>
+    </tr>
+    <tr>
+        <td>NUMBER OF POINTS:</td>
+        <TD>
+            <INPUT ID = "numberofpointsinput">
+        </TD>
+    </tr>
+    <tr>
+        <td>AVERAGES PER POINT:</td>
+        <TD>
+            <INPUT ID = "averagesperpointinput">
+        </TD>
+    </tr>
+    
+</table>
+
+    <div id = "click">CLICK TO PLAY 1000 HZ SINE WAVE! DESCRIBE EXPERIMENT  IN NOTES FIELD:</div>
+<textarea id = "notes"></textarea>
 <script>
-    /*
-
-data should have:
-when (date and time of start and end)
-who (url to operator)
-where (city, watershed, street, lat/lon, altitude)
-water(where it comes from, where it goes)
-code repository
-array of powers for fundamental and 3 harmonics up from that
-array of times in seconds from start
-stimulus
-organisms
-distance between electrodes
-type of electrode
-depth of electrode
-temperature
-
-*/
 
 
-let osc, fft,osc2,osc3;
+
+let osc, fft;
+
+
+settings = {
+    "numberofpoints": 500,
+    "averagesperpoint": 10
+};
+
+function savesettings(){
+    var url = "filesaver.php";        
+    var httpc = new XMLHttpRequest();
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(JSON.stringify(settings,null,"    "))+"&filename=settings.txt");//send text to filesaver.php
+}
+
 
 frameIndex = 0;
 xgain = 6;
@@ -91,7 +154,33 @@ data.f3 = f3;
 data.f4 = f4;
 data.notes = "experiment notes";
 
+document.getElementById("numberofpointsinput").onchange = function(){
+    settings.numberofpoints = parseInt(this.value);
+    windowsize = settings.numberofpoints;
+    savesettings();
+}
+document.getElementById("averagesperpointinput").onchange = function(){
+    settings.averagesperpoint = parseInt(this.value);
+    numberofaverages = settings.averagesperpoint;
+    savesettings();
+}
+
+
+
 function setup() {
+
+    var httpcjson = new XMLHttpRequest();
+        httpcjson.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            settings = JSON.parse(this.responseText);
+            document.getElementById("numberofpointsinput").value = settings.numberofpoints.toString();
+            document.getElementById("averagesperpointinput").value = settings.averagesperpoint.toString();
+            numberofaverages = settings.averagesperpoint;
+            windowsize = settings.numberofpoints;
+        }
+    };
+    httpcjson.open("GET", "fileloader.php?filename=settings.txt", true);
+    httpcjson.send();
 
   t0 = millis();
   frameRate(32);
@@ -219,8 +308,9 @@ function draw() {
     data.p3 = power3array;
     data.p4 = power4array;
     data.timeseconds= timearray;
+    data.notes = document.getElementById("notes").value;
     
-    svgtext = "<svg width=\"" + innerWidth.toString() + "\" height=\"" + (Math.round(0.5*innerHeight)).toString() + "\" viewbox = \"0 0 " + innerWidth.toString() + " " + (Math.round(0.5*innerHeight)).toString() + "\"  xmlns=\"http://www.w3.org/2000/svg\">\n";
+    svgtext = "<svg width=\"" + windowsize.toString() + "\" height=\"" + (Math.round(0.5*innerHeight)).toString() + "\" viewbox = \"0 0 " + windowsize.toString() + " " + (Math.round(0.5*innerHeight)).toString() + "\"  xmlns=\"http://www.w3.org/2000/svg\">\n";
     svgtext += "<!--<json>";
     svgtext += JSON.stringify(data);
     svgtext += "</json>-->";
@@ -288,66 +378,32 @@ function mouseClicked() {
 }
 
 
-codesquaresize = 100;
-marginsize = 10;
-fontsize = 12;
-//globalurl = "http://www.trashrobot.org/qrcode.html";
-globalurl = window.location.href;
-qrcode = new QRCode(document.getElementById("qrcode"), {
-	text: globalurl,
-	width: codesquaresize,
-	height: codesquaresize,
-	colorDark : "#000000",
-	colorLight : "#ffffff",
-	correctLevel : QRCode.CorrectLevel.H
-});
 
+currentfile = "notes.txt";
+
+//get readme.md, convert to html and display
+
+motd = "";
+var httpc = new XMLHttpRequest();
+httpc.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        motd = this.responseText;
+        document.getElementById("notes").value = motd;  
+    }
+};
+httpc.open("GET", "fileloader.php?filename=" + currentfile, true);
+httpc.send();
+
+document.getElementById("notes").onkeyup = function() {
+    scroll = this.value;
+    data = encodeURIComponent(this.value);
+    var httpc = new XMLHttpRequest();
+    var url = "filesaver.php";        
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+    httpc.send("data="+data+"&filename=" + currentfile);//send text to filesaver.php
+}
 
 </script>
-<style>
-    body{
-        overflow:hidden;
-    }
-    #homelink{
-        position:absolute;
-        color:blue;
-        top:10px;
-        left:25%;
-        width:5em;
-        font-family:Comic Sans MS;
-    }
-    #readme{
-        position:absolute;
-        right:10px;
-        top:10px;
-        border:solid;
-        overflow:scroll;
-        height:200px;
-        width:200px;
-        border-radius:10px;
-        border-width:5px;
-        font-family:courier;
-        color:white;
-        background-color:#0000ff;
-        font-size:16px;
-        padding:1em 1em 1em 1em;
-    }
-    #dtmfimage{
-        position:absolute;
-        right:10px;
-        width:200px;
-        top:50%;
-    }
-    #qrcode{
-        position:absolute;
-        right:300px;
-        top:10px;
-        z-index:200;
-        background-color:white;
-        border:solid;
-        border-width:10px;
-        border-color:white;
-    }
-</style>
 </body>
 </html>
