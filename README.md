@@ -33,6 +33,9 @@
  - JSON
  - XML
  - SVG
+ - MARKDOWN
+ - SHOWDOWN.JS
+ - MATHJAX.JS
  - FFT
  - FOURIER TRANSFORM
  - QRCODES
@@ -41,6 +44,9 @@
  - UNIX EPOCH
  - MIXER
  - HZ
+ - GITHUB
+ - XAMPP
+ - GITHUB DESKTOP
 
 [![](images/qrcode.png)](images/qrcode.png)
 [![](images/qrcode-page.png)](images/qrcode-page.png)
