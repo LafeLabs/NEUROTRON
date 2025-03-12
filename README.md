@@ -17,7 +17,7 @@ Then take the output of the audio of your computer and plug it into the soil, an
 
 Once all this is set up, go to 
 
-### [http://localhost/NEUROTRON/]
+### [http://localhost/NEUROTRON/](http://localhost/NEUROTRON/)
 
 And click on the screen to start the 1000 Hz sine wave.  Try this right away, before getting the wiring set up!  You should see that you have built a primitive sonar, that waving your hand around by the speaker can be sensed by the response!
 
