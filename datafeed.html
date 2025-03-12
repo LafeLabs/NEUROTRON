@@ -24,7 +24,7 @@ github.com/lafelabs/imagefeed/
 <script>
 
 deletemode = true;
-deletemode = false;
+//deletemode = false;
 
 uploadImages = [];
 
@@ -64,7 +64,7 @@ function loadimagefeed(){
             newspan.classList.add("deletebutton");
             newspan.onclick = function(){
                 var imageurl =this.parentElement.getElementsByClassName("uploadimage")[0].src; 
-                var imagename = "plots/" + imageurl.split("images/")[1];
+                var imagename = "plots/" + imageurl.split("plots/")[1];
                 var httpc = new XMLHttpRequest();
                 var url = "deletefile.php";         
                 httpc.open("POST", url, true);

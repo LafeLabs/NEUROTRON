@@ -146,7 +146,7 @@ windowsize = innerWidth/2;
 //windowsize = 200;
 
 data = {};
-data.starttime = Math.floor(Date.now() / 1000);
+data.starttime = Date.now()/1000;
 data.startdate = Date();
 data.f1 = f1;
 data.f2 = f2;
@@ -242,7 +242,7 @@ function draw() {
       power3 = 0;
       power4 = 0;
       
-      time = Math.floor(Date.now() / 100)/10 - data.starttime;
+      time = (Date.now() / 1000) - data.starttime;
       timearray.push(time);
   }
   
@@ -352,7 +352,7 @@ function draw() {
     power4array = [];
     timearray = [];
     
-    data.starttime = Math.floor(Date.now() / 1000);
+    data.starttime = Date.now()/1000;
     data.startdate = Date();
 
   }
